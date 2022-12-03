@@ -110,7 +110,9 @@ const Tour = ({ data }: TourProps) => {
   console.log(data._links['wp:attachment'])
   return (
     <div>
-      {data.title.rendered} - {data.slug}
+      <a href={data.link} target="_blank" rel="noopener noreferrer">
+        {data.title.rendered} - {data.slug}
+      </a>
     </div>
   )
 }
