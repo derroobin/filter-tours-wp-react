@@ -179,14 +179,16 @@ const useFilter = () => {
 
     const url = new URL(window.location.href)
     Object.entries(parameter).forEach(([k, v]) => {
-      if (v) {
-        url.searchParams.set(k, v)
-      } else {
-        url.searchParams.delete(k)
+      if (v !== url.searchParams.get(k)) {
+        if (v) {
+          url.searchParams.set(k, v)
+        } else {
+          url.searchParams.delete(k)
+        }
       }
     })
 
-    history.pushState({}, '', url)
+    history.replaceState({}, '', url)
   }, [dauer, hoehenmeter, land, gipfelhoehe, schwierigkeit, region])
 
   return {
