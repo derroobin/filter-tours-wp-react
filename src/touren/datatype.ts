@@ -20,6 +20,7 @@ export interface TourenType {
   ping_status: string
   template: string
   meta: { [key: string]: Meta }
+  acf: Acf
   _links: Links
 }
 
@@ -34,6 +35,7 @@ export interface Links {
   up: Author[]
   'wp:attachment': About[]
   curies: Cury[]
+  'wp:featuredmedia'?: Author[]
 }
 
 export interface About {
@@ -59,6 +61,15 @@ export interface PredecessorVersion {
 export interface VersionHistory {
   count: number
   href: string
+}
+
+export interface Acf {
+  land?: string
+  region?: string
+  gipfelhoehe?: string
+  hoehenmeter?: string
+  dauer?: string
+  schwierigkeit?: string
 }
 
 export interface Content {
