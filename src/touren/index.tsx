@@ -1,6 +1,7 @@
 import { Dispatch, useEffect, useState, SetStateAction } from 'react'
 import { useImage, useTouren } from './queries'
 import type { TourenType, Acf, MediaType } from './datatype'
+import { AnimatePresence, motion } from 'framer-motion'
 
 type ParameterType = Record<keyof Acf, string | null>
 type FilterOuterProps = ParameterType &
@@ -283,9 +284,11 @@ const Touren = () => {
     <div>
       {Filter}
       <div className="grid gap-4">
-        {data.map((x) => (
-          <Tour key={x.slug} data={x} />
-        ))}
+        <AnimatePresence>
+          {data.map((x) => (
+            <Tour key={x.slug} data={x} />
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   )
@@ -338,7 +341,8 @@ interface TourProps {
 }
 const Tour = ({ data }: TourProps) => {
   return (
-    <a
+    <motion.a
+      layout
       href={data.link}
       target="_blank"
       rel="noopener noreferrer"
@@ -349,7 +353,7 @@ const Tour = ({ data }: TourProps) => {
           <span>{data.title.rendered}</span>
         </div>
       </div>
-    </a>
+    </motion.a>
   )
 }
 
