@@ -1,7 +1,12 @@
-import { Dispatch, useEffect, useState, SetStateAction } from 'react'
+import { Dispatch, useEffect, useState, SetStateAction, useRef } from 'react'
 import { useImage, useTouren } from './queries'
 import type { TourenType, Acf, MediaType } from './datatype'
 import { AnimatePresence, motion } from 'framer-motion'
+import {
+  RovingTabIndexProvider,
+  useRovingTabIndex,
+  useFocusEffect
+} from 'react-roving-tabindex'
 
 type ParameterType = Record<keyof Acf, string | null>
 type FilterOuterProps = ParameterType &
@@ -18,21 +23,102 @@ interface SelectionType {
   setState: Dispatch<SetStateAction<string | null>>
   name: string
 }
-const Selection = ({ setState, name, value, options }: SelectionType) => {
+
+const Option = ({
+  setState,
+  name,
+  value,
+  option,
+  idx,
+  disabled = false
+}: Omit<SelectionType, 'options'> & {
+  option: null | string
+  idx: number
+  disabled?: boolean
+}) => {
+  const id = (name + idx).replace(/[äüö]/, '').toLowerCase()
+  const ref = useRef<HTMLButtonElement>(null)
+  const [tabIndex, focused, handleKeyDown, handleClick] = useRovingTabIndex(
+    ref,
+    disabled
+  )
+  useFocusEffect(focused, ref)
+
   return (
-    <select
-      className="capitalize px-4 py-2 bg-transparent border rounded border-gray-300 hover:border-gray-400"
-      onChange={(e) => setState(e.target.value)}
-      value={value || ''}>
-      <option className="bg-white hover:bg-slate-500 capitalize" value="">
-        {name}
-      </option>
-      {options.map((v) => (
-        <option className="bg-white hover:bg-slate-500" value={v} key={v}>
-          {v}
-        </option>
-      ))}
-    </select>
+    <li className="list-none">
+      <button
+        className="focus:bg-blue-400 hover:bg-blue-400 w-full text-left px-4 py-2 rounded-md"
+        ref={ref}
+        tabIndex={tabIndex}
+        disabled={disabled}
+        onKeyDown={handleKeyDown}
+        onClick={(e) => {
+          handleClick()
+          setState(option || null)
+          ref.current?.blur()
+        }}>
+        {option || 'abwählen'}
+      </button>
+    </li>
+  )
+}
+//
+const Selection = ({ setState, name, value, options }: SelectionType) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [expanded, setExpanded] = useState(false)
+  useEffect(() => {
+    if (ref.current) {
+      const x = () => {
+        setExpanded(true)
+      }
+      const y = () => {
+        setExpanded(false)
+      }
+      ref.current.addEventListener('focusin', x)
+      ref.current.addEventListener('focusout', y)
+
+      return () => {
+        ref.current?.removeEventListener('focusin', x)
+        ref.current?.removeEventListener('focusout', y)
+      }
+    }
+  }, [])
+  return (
+    <div className="relative" aria-label={name}>
+      <div className="group relative" ref={ref}>
+        <button
+          className="capitalize border rounded-md border-gray-400 px-4 py-2 w-full text-left text-lg bg-white"
+          tabIndex={-1}>
+          {value || name}
+        </button>
+
+        <ul
+          className="opacity-0 -translate-y-2 top-[110%] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-0 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all"
+          aria-haspopup="true"
+          aria-expanded={expanded}>
+          <RovingTabIndexProvider>
+            {options.map((x, idx) => (
+              <Option
+                idx={idx}
+                option={x}
+                setState={setState}
+                key={x}
+                value={value}
+                name={name}
+              />
+            ))}
+          </RovingTabIndexProvider>
+        </ul>
+      </div>
+      {!!value ? (
+        <button
+          onClick={() => setState(null)}
+          className="absolute right-1  aspect-square h-9 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full"
+          aria-label="Auswahl leeren">
+          x
+        </button>
+      ) : null}
+    </div>
   )
 }
 
@@ -59,7 +145,7 @@ const Filter = ({
   }
 }: FilterOuterProps) => {
   return (
-    <div className="grid grid-cols-2 max-w-lg gap-x-3 gap-y-2 mx-auto pt-2 mb-10 ">
+    <div className="grid lg:grid-cols-2 max-w-md lg:max-w-lg gap-x-3 gap-y-2 mx-auto pt-2 mb-10 px-4">
       <Selection
         name="dauer"
         options={dauers}
@@ -318,15 +404,15 @@ const Image = ({ imageId }: ImageProps) => {
     .join(', ')
 
   return (
-    <div className="relative col-start-1 row-start-1 z-0">
+    <div className="relative col-start-1 row-start-1 z-0 overflow-hidden">
       <span
         className="block"
         style={{
-          aspectRatio: `${image.data.media_details.sizes.medium_large.width} / ${image.data.media_details.sizes.medium_large.height}`
+          aspectRatio: `8 / 2`
         }}></span>
       <img
         loading="lazy"
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 object-cover w-full h-full"
         src={image.data.media_details.sizes.medium_large.source_url}
         sizes="100vw"
         srcSet={srcSet}
@@ -342,6 +428,8 @@ interface TourProps {
 const Tour = ({ data }: TourProps) => {
   return (
     <motion.a
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 1, opacity: 0 }}
       layout
       href={data.link}
       target="_blank"
@@ -349,7 +437,7 @@ const Tour = ({ data }: TourProps) => {
       className="group">
       <div className="grid">
         <Image imageId={data.featured_media} />
-        <div className="col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white group-hover:underline-offset-8 group-hover:underline font-medium text-2xl md:text-4xl lg:text-6xl px-4">
+        <div className=" origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:group-hover:underline-offset-8 group-hover:underline-offset-[3px] group-hover:underline font-medium text-2xl md:text-4xl lg:text-6xl px-4">
           <span>{data.title.rendered}</span>
         </div>
       </div>
