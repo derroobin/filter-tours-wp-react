@@ -1,13 +1,23 @@
-import { Dispatch, useEffect, useState, SetStateAction, useRef } from 'react'
-import { useImage, useTouren } from './queries'
-import type { TourenType, Acf, MediaType } from './datatype'
+import {
+  Dispatch,
+  useEffect,
+  useState,
+  SetStateAction,
+  useRef,
+  Suspense,
+  lazy
+} from 'react'
+import { useTouren } from './queries'
+import type { TourenType, Acf } from './datatype'
 import { AnimatePresence, m } from 'framer-motion'
 import {
   RovingTabIndexProvider,
   useRovingTabIndex,
   useFocusEffect
 } from 'react-roving-tabindex'
-import { useInView } from 'react-intersection-observer'
+import { Placeholder } from './placeholder'
+
+const Image = lazy(() => import('./image'))
 
 type ParameterType = Record<keyof Acf, string | null>
 type FilterOuterProps = ParameterType &
@@ -381,56 +391,6 @@ const Touren = () => {
   )
 }
 
-interface ImageProps {
-  imageId: number
-  idx: number
-}
-const Image = ({ imageId, idx }: ImageProps) => {
-  const image = useImage(imageId)
-  const { ref, inView } = useInView({
-    initialInView: idx < 1,
-    triggerOnce: true
-  })
-
-  const selectedSizes: Array<keyof MediaType['media_details']['sizes']> = [
-    'medium_large',
-    'large',
-    'full'
-  ]
-  const srcSet = selectedSizes
-    .map((key) => {
-      const src = image.data?.media_details.sizes[key]
-
-      if (!src) return ''
-
-      return `${src.source_url} ${src.width}w`
-    })
-    .join(', ')
-
-  return (
-    <div
-      className="relative col-start-1 row-start-1 z-0 overflow-hidden"
-      ref={ref}>
-      <span
-        className="block"
-        style={{
-          aspectRatio: `8 / 2`
-        }}></span>
-      {image.data && inView ? (
-        <img
-          loading={idx <= 1 ? 'eager' : 'lazy'}
-          className="absolute inset-0 z-0 object-cover w-full h-full"
-          src={image.data.media_details.sizes.medium_large.source_url}
-          sizes="100vw"
-          srcSet={srcSet}
-          alt={image.data.title.rendered}
-        />
-      ) : null}
-      <div className="absolute inset-0 z-0 bg-[linear-gradient(160deg,rgb(28,40,65),rgb(0,14,41))] opacity-0 group-hover:opacity-50 transition-opacity" />
-    </div>
-  )
-}
-
 interface TourProps {
   data: TourenType
   idx: number
@@ -444,7 +404,9 @@ const Tour = ({ data, idx }: TourProps) => {
       href={data.link}
       className="group">
       <div className="grid">
-        <Image imageId={data.featured_media} idx={idx} />
+        <Suspense fallback={<Placeholder />}>
+          <Image imageId={data.featured_media} idx={idx} />
+        </Suspense>
         <div className=" origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:group-hover:underline-offset-8 group-hover:underline-offset-[3px] group-hover:underline font-medium text-3xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
           <span>{data.title.rendered}</span>
         </div>
