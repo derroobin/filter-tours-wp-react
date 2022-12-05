@@ -445,7 +445,7 @@ const Tour = ({ data, idx }: TourProps) => {
       className="group">
       <div className="grid">
         <Image imageId={data.featured_media} idx={idx} />
-        <div className=" origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:group-hover:underline-offset-8 group-hover:underline-offset-[3px] group-hover:underline font-medium text-2xl md:text-4xl lg:text-6xl px-4">
+        <div className=" origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:group-hover:underline-offset-8 group-hover:underline-offset-[3px] group-hover:underline font-medium text-3xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
           <span>{data.title.rendered}</span>
         </div>
       </div>
