@@ -48,7 +48,7 @@ const Option = ({
   return (
     <li className="list-none">
       <span
-        className="cursor-pointer block focus:bg-blue-400 hover:bg-blue-400 w-full text-left px-4 py-2 rounded-md"
+        className="cursor-pointer block focus:bg-blue-400 hover:bg-blue-400 hover:ring-2 focus:ring-2 ring-blue-700 w-full text-left px-4 py-2 rounded-md overflow-visible"
         ref={ref}
         tabIndex={tabIndex}
         onKeyDown={handleKeyDown}
