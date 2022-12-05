@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { useTouren } from './queries'
 import type { TourenType, Acf } from './datatype'
-import { AnimatePresence, m } from 'framer-motion'
+import { AnimatePresence, motion as m } from 'framer-motion'
 import {
   RovingTabIndexProvider,
   useRovingTabIndex,
