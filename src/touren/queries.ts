@@ -7,9 +7,6 @@ const getPages = async () => {
       import.meta.env.VITE_URL
     }/wp-json/wp/v2/pages?parent=12472&per_page=100&_fields=acf,slug,title,featured_media,link`
   )
-
-  console.log(url)
-
   const req = await fetch(url)
 
   return (await req.json()) as TourenType[]

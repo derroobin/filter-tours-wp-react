@@ -371,8 +371,8 @@ const Touren = () => {
       {Filter}
       <div className="grid gap-4">
         <AnimatePresence>
-          {data.map((x) => (
-            <Tour key={x.slug} data={x} />
+          {data.map((x, idx) => (
+            <Tour key={x.slug} data={x} idx={idx} />
           ))}
         </AnimatePresence>
       </div>
@@ -382,8 +382,9 @@ const Touren = () => {
 
 interface ImageProps {
   imageId: number
+  idx: number
 }
-const Image = ({ imageId }: ImageProps) => {
+const Image = ({ imageId, idx }: ImageProps) => {
   const image = useImage(imageId)
 
   if (imageId === 0 || !image.data) return null
@@ -411,7 +412,7 @@ const Image = ({ imageId }: ImageProps) => {
           aspectRatio: `8 / 2`
         }}></span>
       <img
-        loading="lazy"
+        loading={idx <= 1 ? 'eager' : 'lazy'}
         className="absolute inset-0 z-0 object-cover w-full h-full"
         src={image.data.media_details.sizes.medium_large.source_url}
         sizes="100vw"
@@ -424,8 +425,9 @@ const Image = ({ imageId }: ImageProps) => {
 
 interface TourProps {
   data: TourenType
+  idx: number
 }
-const Tour = ({ data }: TourProps) => {
+const Tour = ({ data, idx }: TourProps) => {
   return (
     <motion.a
       animate={{ scale: 1, opacity: 1 }}
@@ -436,7 +438,7 @@ const Tour = ({ data }: TourProps) => {
       rel="noopener noreferrer"
       className="group">
       <div className="grid">
-        <Image imageId={data.featured_media} />
+        <Image imageId={data.featured_media} idx={idx} />
         <div className=" origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:group-hover:underline-offset-8 group-hover:underline-offset-[3px] group-hover:underline font-medium text-2xl md:text-4xl lg:text-6xl px-4">
           <span>{data.title.rendered}</span>
         </div>
