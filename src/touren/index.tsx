@@ -1,7 +1,7 @@
 import { Dispatch, useEffect, useState, SetStateAction, useRef } from 'react'
 import { useImage, useTouren } from './queries'
 import type { TourenType, Acf, MediaType } from './datatype'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m, useInView } from 'framer-motion'
 import {
   RovingTabIndexProvider,
   useRovingTabIndex,
@@ -386,8 +386,8 @@ interface ImageProps {
 }
 const Image = ({ imageId, idx }: ImageProps) => {
   const image = useImage(imageId)
-
-  if (imageId === 0 || !image.data) return null
+  const ref = useRef(null)
+  const isInView = useInView(ref)
 
   const selectedSizes: Array<keyof MediaType['media_details']['sizes']> = [
     'medium_large',
@@ -396,7 +396,7 @@ const Image = ({ imageId, idx }: ImageProps) => {
   ]
   const srcSet = selectedSizes
     .map((key) => {
-      const src = image.data.media_details.sizes[key]
+      const src = image.data?.media_details.sizes[key]
 
       if (!src) return ''
 
@@ -405,19 +405,23 @@ const Image = ({ imageId, idx }: ImageProps) => {
     .join(', ')
 
   return (
-    <div className="relative col-start-1 row-start-1 z-0 overflow-hidden">
+    <div
+      className="relative col-start-1 row-start-1 z-0 overflow-hidden"
+      ref={ref}>
       <span
         className="block"
         style={{
           aspectRatio: `8 / 2`
         }}></span>
-      <img
-        loading={idx <= 1 ? 'eager' : 'lazy'}
-        className="absolute inset-0 z-0 object-cover w-full h-full"
-        src={image.data.media_details.sizes.medium_large.source_url}
-        sizes="100vw"
-        srcSet={srcSet}
-      />
+      {image.data && (idx <= 1 || isInView) ? (
+        <img
+          loading={idx <= 1 ? 'eager' : 'lazy'}
+          className="absolute inset-0 z-0 object-cover w-full h-full"
+          src={image.data?.media_details.sizes.medium_large.source_url}
+          sizes="100vw"
+          srcSet={srcSet}
+        />
+      ) : null}
       <div className="absolute inset-0 z-0 bg-[linear-gradient(160deg,rgb(28,40,65),rgb(0,14,41))] opacity-0 group-hover:opacity-50 transition-opacity" />
     </div>
   )
@@ -429,7 +433,7 @@ interface TourProps {
 }
 const Tour = ({ data, idx }: TourProps) => {
   return (
-    <motion.a
+    <m.a
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 1, opacity: 0 }}
       layout
@@ -443,7 +447,7 @@ const Tour = ({ data, idx }: TourProps) => {
           <span>{data.title.rendered}</span>
         </div>
       </div>
-    </motion.a>
+    </m.a>
   )
 }
 
