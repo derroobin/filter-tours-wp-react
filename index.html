@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
     <link
-      rel="prefetch"
-      href="https://deingipfel-outdoorverleih.de/wp-json/wp/v2/pages?parent=12472&per_page=100" />
+      rel="preload"
+      as="fetch"
+      href="https://deingipfel-outdoorverleih.de/wp-json/wp/v2/pages?parent=12472&per_page=100&_fields=acf,slug,title,featured_media,link"
+      crossorigin="anonymous" />
   </head>
   <body>
     <div id="root"></div>
