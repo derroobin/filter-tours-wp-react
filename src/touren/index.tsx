@@ -145,7 +145,7 @@ const Filter = ({
   }
 }: FilterOuterProps) => {
   return (
-    <div className="grid lg:grid-cols-2 max-w-md lg:max-w-lg gap-x-3 gap-y-2 mx-auto pt-2 mb-10 px-4">
+    <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-2 pt-2 mb-10 px-4">
       <Selection
         name="dauer"
         options={dauers}
