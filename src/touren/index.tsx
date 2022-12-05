@@ -1,12 +1,13 @@
 import { Dispatch, useEffect, useState, SetStateAction, useRef } from 'react'
 import { useImage, useTouren } from './queries'
 import type { TourenType, Acf, MediaType } from './datatype'
-import { AnimatePresence, m, useInView } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import {
   RovingTabIndexProvider,
   useRovingTabIndex,
   useFocusEffect
 } from 'react-roving-tabindex'
+import { useInView } from 'react-intersection-observer'
 
 type ParameterType = Record<keyof Acf, string | null>
 type FilterOuterProps = ParameterType &
@@ -386,8 +387,10 @@ interface ImageProps {
 }
 const Image = ({ imageId, idx }: ImageProps) => {
   const image = useImage(imageId)
-  const ref = useRef(null)
-  const isInView = useInView(ref)
+  const { ref, inView } = useInView({
+    initialInView: idx < 1,
+    triggerOnce: true
+  })
 
   const selectedSizes: Array<keyof MediaType['media_details']['sizes']> = [
     'medium_large',
@@ -413,13 +416,14 @@ const Image = ({ imageId, idx }: ImageProps) => {
         style={{
           aspectRatio: `8 / 2`
         }}></span>
-      {image.data && (idx <= 1 || isInView) ? (
+      {image.data && inView ? (
         <img
           loading={idx <= 1 ? 'eager' : 'lazy'}
           className="absolute inset-0 z-0 object-cover w-full h-full"
-          src={image.data?.media_details.sizes.medium_large.source_url}
+          src={image.data.media_details.sizes.medium_large.source_url}
           sizes="100vw"
           srcSet={srcSet}
+          alt={image.data.title.rendered}
         />
       ) : null}
       <div className="absolute inset-0 z-0 bg-[linear-gradient(160deg,rgb(28,40,65),rgb(0,14,41))] opacity-0 group-hover:opacity-50 transition-opacity" />
