@@ -46,11 +46,10 @@ const Option = ({
 
   return (
     <li className="list-none">
-      <button
-        className="focus:bg-blue-400 hover:bg-blue-400 w-full text-left px-4 py-2 rounded-md"
+      <span
+        className="cursor-pointer block focus:bg-blue-400 hover:bg-blue-400 w-full text-left px-4 py-2 rounded-md"
         ref={ref}
         tabIndex={tabIndex}
-        disabled={disabled}
         onKeyDown={handleKeyDown}
         onClick={(e) => {
           handleClick()
@@ -58,7 +57,7 @@ const Option = ({
           ref.current?.blur()
         }}>
         {option || 'abwählen'}
-      </button>
+      </span>
     </li>
   )
 }
@@ -86,11 +85,12 @@ const Selection = ({ setState, name, value, options }: SelectionType) => {
   return (
     <div className="relative" aria-label={name}>
       <div className="group relative" ref={ref}>
-        <button
-          className="capitalize border rounded-md border-gray-400 px-4 py-2 w-full text-left text-lg bg-white"
-          tabIndex={-1}>
+        <span
+          className="block capitalize border rounded-md border-gray-400 px-4 py-2 w-full text-left text-lg bg-white cursor-pointer"
+          tabIndex={-1}
+          onClick={() => ref.current?.focus()}>
           {value || name}
-        </button>
+        </span>
 
         <ul
           className="opacity-0 -translate-y-2 top-[110%] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-0 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all"
