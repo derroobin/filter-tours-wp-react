@@ -442,8 +442,6 @@ const Tour = ({ data, idx }: TourProps) => {
       exit={{ scale: 1, opacity: 0 }}
       layout
       href={data.link}
-      target="_blank"
-      rel="noopener noreferrer"
       className="group">
       <div className="grid">
         <Image imageId={data.featured_media} idx={idx} />
