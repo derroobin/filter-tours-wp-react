@@ -66,7 +66,6 @@ const Option = ({
           setState((current) => {
             const newPartial: FilterSettings = {}
             newPartial[type] = option || undefined
-            console.log({ ...current, ...newPartial }, value)
             return { ...current, ...newPartial }
           })
           ref.current?.blur()
@@ -80,7 +79,6 @@ const Option = ({
 const Selection = ({ setState, name, value, options, type }: SelectionType) => {
   const ref = useRef<HTMLDivElement>(null)
   const [expanded, setExpanded] = useState(false)
-  console.log(options)
   useEffect(() => {
     if (ref.current) {
       const x = () => {
@@ -132,11 +130,10 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
           onClick={() =>
             setState((current) => {
               current[type] = undefined
-              console.log(current)
               return { ...current }
             })
           }
-          className="absolute right-1  aspect-square h-9 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full"
+          className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full"
           aria-label="Auswahl leeren">
           x
         </button>
@@ -303,15 +300,14 @@ const useFilter = () => {
 
   // handles setting of options to url
   useEffect(() => {
-    const parameter = state
-
     const url = new URL(window.location.href)
-    Object.entries(parameter).forEach(([k, v]) => {
-      if (v !== url.searchParams.get(k)) {
-        if (v) {
-          url.searchParams.set(k, v)
+    availableSettings.forEach((key) => {
+      const value = state[key]
+      if (value !== url.searchParams.get(key)) {
+        if (value) {
+          url.searchParams.set(key, value)
         } else {
-          url.searchParams.delete(k)
+          url.searchParams.delete(key)
         }
       }
     })
