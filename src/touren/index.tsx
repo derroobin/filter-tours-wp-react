@@ -5,7 +5,8 @@ import {
   SetStateAction,
   useRef,
   Suspense,
-  lazy
+  lazy,
+  useMemo
 } from 'react'
 import { useTouren } from './queries'
 import type { TourenType, Acf } from './datatype'
@@ -19,35 +20,33 @@ import { Placeholder } from './placeholder'
 
 const Image = lazy(() => import('./image'))
 
-type ParameterType = Record<keyof Acf, string | null>
-type FilterOuterProps = ParameterType &
-  Record<
-    `set${Capitalize<keyof Acf>}`,
-    Dispatch<SetStateAction<string | null>>
-  > & { options: FilterProps }
+type FilterOuterProps = {
+  state: FilterSettings
+  setState: Dispatch<SetStateAction<FilterSettings>>
+  options: FilterProps
+}
 
 type FilterProps = Record<`${keyof Acf}s`, Array<string>>
 
 interface SelectionType {
   options: string[]
-  value: string | null
-  setState: Dispatch<SetStateAction<string | null>>
+  value: string | null | undefined
+  setState: Dispatch<SetStateAction<FilterSettings>>
   name: string
+  type: keyof Acf
 }
 
 const Option = ({
   setState,
-  name,
+  type,
   value,
   option,
-  idx,
   disabled = false
 }: Omit<SelectionType, 'options'> & {
   option: null | string
   idx: number
   disabled?: boolean
 }) => {
-  const id = (name + idx).replace(/[äüö]/, '').toLowerCase()
   const ref = useRef<HTMLButtonElement>(null)
   const [tabIndex, focused, handleKeyDown, handleClick] = useRovingTabIndex(
     ref,
@@ -64,7 +63,12 @@ const Option = ({
         onKeyDown={handleKeyDown}
         onClick={(e) => {
           handleClick()
-          setState(option || null)
+          setState((current) => {
+            const newPartial: FilterSettings = {}
+            newPartial[type] = option || undefined
+            console.log({ ...current, ...newPartial }, value)
+            return { ...current, ...newPartial }
+          })
           ref.current?.blur()
         }}>
         {option || 'abwählen'}
@@ -73,9 +77,10 @@ const Option = ({
   )
 }
 //
-const Selection = ({ setState, name, value, options }: SelectionType) => {
+const Selection = ({ setState, name, value, options, type }: SelectionType) => {
   const ref = useRef<HTMLDivElement>(null)
   const [expanded, setExpanded] = useState(false)
+  console.log(options)
   useEffect(() => {
     if (ref.current) {
       const x = () => {
@@ -110,6 +115,7 @@ const Selection = ({ setState, name, value, options }: SelectionType) => {
           <RovingTabIndexProvider>
             {options.map((x, idx) => (
               <Option
+                type={type}
                 idx={idx}
                 option={x}
                 setState={setState}
@@ -123,7 +129,13 @@ const Selection = ({ setState, name, value, options }: SelectionType) => {
       </div>
       {!!value ? (
         <button
-          onClick={() => setState(null)}
+          onClick={() =>
+            setState((current) => {
+              current[type] = undefined
+              console.log(current)
+              return { ...current }
+            })
+          }
           className="absolute right-1  aspect-square h-9 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full"
           aria-label="Auswahl leeren">
           x
@@ -134,18 +146,8 @@ const Selection = ({ setState, name, value, options }: SelectionType) => {
 }
 
 const Filter = ({
-  dauer,
-  setDauer,
-  setGipfelhoehe,
-  gipfelhoehe,
-  hoehenmeter,
-  setHoehenmeter,
-  land,
-  setLand,
-  region,
-  setRegion,
-  schwierigkeit,
-  setSchwierigkeit,
+  state,
+  setState,
   options: {
     lands,
     regions,
@@ -155,56 +157,63 @@ const Filter = ({
     dauers
   }
 }: FilterOuterProps) => {
+  const showDeleteButton = useMemo(
+    () => Object.values(state).filter((x) => !!x).length > 0,
+    [state]
+  )
   return (
     <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-2 pt-2 mb-10 px-4">
       <Selection
+        type="dauer"
         name="dauer"
         options={dauers}
-        setState={setDauer}
-        value={dauer}
+        setState={setState}
+        value={state.dauer}
       />
       <Selection
+        type="schwierigkeit"
         name="schwierigkeit"
         options={schwierigkeits}
-        setState={setSchwierigkeit}
-        value={schwierigkeit}
+        setState={setState}
+        value={state.schwierigkeit}
       />
-      <Selection name="land" options={lands} setState={setLand} value={land} />
       <Selection
+        type="land"
+        name="land"
+        options={lands}
+        setState={setState}
+        value={state.land}
+      />
+      <Selection
+        type="region"
         name="region"
         options={regions}
-        setState={setRegion}
-        value={region}
+        setState={setState}
+        value={state.region}
       />
       <Selection
+        type="gipfelhoehe"
         name="gipfelhöhe"
         options={gipfelhoehes}
-        setState={setGipfelhoehe}
-        value={gipfelhoehe}
+        setState={setState}
+        value={state.gipfelhoehe}
       />
       <Selection
+        type="hoehenmeter"
         name="höhenmeter"
         options={hoehenmeters}
-        setState={setHoehenmeter}
-        value={hoehenmeter}
+        setState={setState}
+        value={state.hoehenmeter}
       />
+      {showDeleteButton ? (
+        <button
+          className="underline underline-offset-2 text-blue-600 hover:text-blue-400 text-left pl-2"
+          onClick={() => setState({})}>
+          Alle Filter löschen
+        </button>
+      ) : null}
     </div>
   )
-}
-const useSetting = (
-  url: URL,
-  id: keyof Acf
-): [string | null, Dispatch<SetStateAction<string | null>>] => {
-  const [state, setState] = useState<string | null>(
-    url.searchParams.get(id) || ''
-  )
-
-  useEffect(() => {
-    const x = url.searchParams.get(id)
-    if (x !== state) setState(x)
-  }, [url])
-
-  return [state, setState]
 }
 
 const useURL = () => {
@@ -220,15 +229,35 @@ const useURL = () => {
 
   return url
 }
+const availableSettings: Array<keyof Acf> = [
+  'dauer',
+  'hoehenmeter',
+  'land',
+  'gipfelhoehe',
+  'schwierigkeit',
+  'region'
+]
+
+type FilterSettings = { [key in keyof Acf]: string }
+
+const getSettingsFromUrl = (url: URL) => {
+  const res: FilterSettings = {}
+  for (const filter of availableSettings) {
+    const x = url.searchParams.get(filter)
+    if (x) {
+      res[filter] = x
+    }
+  }
+  return res
+}
 
 const useFilter = () => {
   const url = useURL()
-  const [dauer, setDauer] = useSetting(url, 'dauer')
-  const [hoehenmeter, setHoehenmeter] = useSetting(url, 'hoehenmeter')
-  const [land, setLand] = useSetting(url, 'land')
-  const [gipfelhoehe, setGipfelhoehe] = useSetting(url, 'gipfelhoehe')
-  const [schwierigkeit, setSchwierigkeit] = useSetting(url, 'schwierigkeit')
-  const [region, setRegion] = useSetting(url, 'region')
+  const [state, setState] = useState<FilterSettings>(getSettingsFromUrl(url))
+  useEffect(() => {
+    const filter = getSettingsFromUrl(url)
+    setState(filter)
+  }, [url])
 
   const all = useTouren()
   const options = useOptions()
@@ -240,26 +269,29 @@ const useFilter = () => {
     if (all.data) {
       setFiltered(
         all.data.filter(({ acf }) => {
-          if (land && land !== acf.land) {
+          if (state.land && state.land !== acf.land) {
             return false
           }
 
-          if (gipfelhoehe && gipfelhoehe !== acf.gipfelhoehe) {
+          if (state.gipfelhoehe && state.gipfelhoehe !== acf.gipfelhoehe) {
             return false
           }
 
-          if (region && region !== acf.region) {
+          if (state.region && state.region !== acf.region) {
             return false
           }
 
-          if (hoehenmeter && hoehenmeter !== acf.hoehenmeter) {
+          if (state.hoehenmeter && state.hoehenmeter !== acf.hoehenmeter) {
             return false
           }
 
-          if (schwierigkeit && schwierigkeit !== acf.schwierigkeit) {
+          if (
+            state.schwierigkeit &&
+            state.schwierigkeit !== acf.schwierigkeit
+          ) {
             return false
           }
-          if (dauer && dauer !== acf.dauer) {
+          if (state.dauer && state.dauer !== acf.dauer) {
             return false
           }
 
@@ -267,18 +299,11 @@ const useFilter = () => {
         })
       )
     }
-  }, [all.data, land, gipfelhoehe, region, schwierigkeit, hoehenmeter, dauer])
+  }, [all.data, state])
 
   // handles setting of options to url
   useEffect(() => {
-    const parameter: ParameterType = {
-      dauer,
-      hoehenmeter,
-      land,
-      gipfelhoehe,
-      schwierigkeit,
-      region
-    }
+    const parameter = state
 
     const url = new URL(window.location.href)
     Object.entries(parameter).forEach(([k, v]) => {
@@ -292,23 +317,13 @@ const useFilter = () => {
     })
 
     history.replaceState({}, '', url)
-  }, [dauer, hoehenmeter, land, gipfelhoehe, schwierigkeit, region])
+  }, [state])
 
   return {
     data: filtered,
     Filter: Filter({
-      dauer,
-      setDauer,
-      hoehenmeter,
-      setHoehenmeter,
-      land,
-      setLand,
-      gipfelhoehe,
-      setGipfelhoehe,
-      schwierigkeit,
-      setSchwierigkeit,
-      region,
-      setRegion,
+      state,
+      setState,
       options
     })
   }
