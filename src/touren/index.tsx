@@ -408,21 +408,18 @@ interface TourProps {
 }
 const Tour = ({ data, idx }: TourProps) => {
   return (
-    <m.a
+    <m.div
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 1, opacity: 0 }}
       layout
-      href={data.link}
-      className="group">
-      <div className="grid">
-        <Suspense fallback={<Placeholder />}>
-          <Image imageId={data.featured_media} idx={idx} />
-        </Suspense>
-        <div className=" origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:group-hover:underline-offset-8 group-hover:underline-offset-[3px] group-hover:underline font-medium text-3xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
-          <span>{data.title.rendered}</span>
-        </div>
+      className="grid">
+      <Suspense fallback={<Placeholder />}>
+        <Image imageId={data.featured_media} idx={idx} />
+      </Suspense>
+      <div className="mx-20 origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:hover:underline-offset-8 hover:underline-offset-[3px] hover:underline font-medium text-3xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
+        <a href={data.link}>{data.title.rendered}</a>
       </div>
-    </m.a>
+    </m.div>
   )
 }
 
