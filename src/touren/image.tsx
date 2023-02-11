@@ -40,6 +40,7 @@ interface ButtonProps {
 const Button = ({ prev, onClick }: ButtonProps) => {
   return (
     <button
+      aria-label={prev ? 'Voheriges Bild' : 'Nächstes Bild'}
       className={`top-1/2 absolute -translate-y-2 z-20 
       bg-white rounded-full font-bold text-lg
       w-10 h-10
