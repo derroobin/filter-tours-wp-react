@@ -70,6 +70,22 @@ export interface Acf {
   hoehenmeter?: string
   dauer?: string
   schwierigkeit?: string
+  i_land?: string
+  i_region?: string
+  i_gipfelhoehe?: string
+  i_hoehenmeter?: string
+  i_dauer?: string
+  i_schwierigkeit?: string
+  bild1?: string | number
+  bild2?: string | number
+  bild3?: string | number
+  bild4?: string | number
+  bild5?: string | number
+  bild6?: string | number
+  bild7?: string | number
+  bild8?: string | number
+  bild9?: string | number
+  bild10?: '' | number
 }
 
 export interface Content {

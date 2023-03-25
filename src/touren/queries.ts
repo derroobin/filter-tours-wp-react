@@ -26,6 +26,6 @@ const getImage = async (imageId: number) => {
 
 export const useImage = (imageId: number) => {
   return useQuery(['media', imageId], () => getImage(imageId), {
-    enabled: imageId !== 0
+    enabled: imageId !== 0 && !!imageId
   })
 }

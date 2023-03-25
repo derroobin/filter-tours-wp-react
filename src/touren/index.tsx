@@ -18,6 +18,17 @@ import {
 } from 'react-roving-tabindex'
 import { Placeholder } from './placeholder'
 
+import bergab from '../assets/icons/Bergab.png'
+import bergauf from '../assets/icons/Bergauf.png'
+import dauer from '../assets/icons/Dauer.png'
+import erfahrung from '../assets/icons/Erfahrung.png'
+import gipfelhoehe from '../assets/icons/Gipfelhoehe.png'
+import jahreszeit from '../assets/icons/Jahreszeit.png'
+import klettersteig from '../assets/icons/Klettersteig.png'
+import land from '../assets/icons/Land_und_Region.png'
+import strecke from '../assets/icons/Strecke.png'
+import technik from '../assets/icons/Technik.png'
+
 const Image = lazy(() => import('./image'))
 
 type FilterOuterProps = {
@@ -26,7 +37,11 @@ type FilterOuterProps = {
   options: FilterProps
 }
 
-type FilterProps = Record<`${keyof Acf}s`, Array<string>>
+type keyofAcf = keyof Pick<
+  Acf,
+  'dauer' | 'hoehenmeter' | 'land' | 'gipfelhoehe' | 'schwierigkeit' | 'region'
+>
+type FilterProps = Record<`${keyofAcf}s`, Array<string>>
 
 interface SelectionType {
   options: string[]
@@ -406,18 +421,65 @@ interface TourProps {
   data: TourenType
   idx: number
 }
+
+type InfoIcon = { icon: string; text?: string; alt: string }
 const Tour = ({ data, idx }: TourProps) => {
+  const infos: InfoIcon[] = [
+    {
+      icon: bergauf,
+      alt: 'Höhenmeter',
+      text: data.acf.hoehenmeter
+    },
+    { icon: gipfelhoehe, text: data.acf.gipfelhoehe, alt: 'Gipfelhöhe' }
+  ]
+  const {
+    bild1,
+    bild2,
+    bild3,
+    bild4,
+    bild5,
+    bild6,
+    bild7,
+    bild8,
+    bild9,
+    bild10
+  } = data.acf
+
+  const images = [
+    bild1,
+    bild2,
+    bild3,
+    bild4,
+    bild5,
+    bild6,
+    bild7,
+    bild8,
+    bild9,
+    bild10
+  ].filter((x) => !!x) as number[]
+  console.log(images)
   return (
     <m.div
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 1, opacity: 0 }}
       layout
-      className="grid">
+      className="grid group">
       <Suspense fallback={<Placeholder />}>
-        <Image imageId={data.featured_media} idx={idx} />
+        <Image imageIds={images} idx={idx} />
       </Suspense>
-      <div className="mx-20 origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:hover:underline-offset-8 hover:underline-offset-[3px] hover:underline font-medium text-3xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
+      <div className="mx-20 origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:hover:underline-offset-8 hover:underline-offset-[3px] hover:underline font-medium text-2xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
         <a href={data.link}>{data.title.rendered}</a>
+        <div className="absolute bottom-1 lg:bottom-3 -right-16 flex items flex-row items-center justify-end opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity gap-6 text-xs md:text-sm">
+          {infos.map(({ icon, text, alt }) => {
+            if (!text) return null
+            return (
+              <div key={icon} className="flex flex-row gap-1 items-center">
+                <img src={icon} className="h-3" alt={alt} />
+                {text}
+              </div>
+            )
+          })}
+        </div>
       </div>
     </m.div>
   )

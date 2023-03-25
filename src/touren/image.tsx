@@ -4,7 +4,7 @@ import type { MediaType } from './datatype'
 import { Placeholder } from './placeholder'
 
 interface ImageProps {
-  imageId: number
+  imageIds: number[]
   idx: number
 }
 
@@ -41,7 +41,7 @@ const Button = ({ prev, onClick }: ButtonProps) => {
   return (
     <button
       aria-label={prev ? 'Voheriges Bild' : 'Nächstes Bild'}
-      className={`top-1/2 absolute -translate-y-2 z-20 
+      className={`top-1/2 absolute -translate-y-1/2 z-20 
       bg-white rounded-full font-bold text-lg
       w-10 h-10
       flex justify-center items-center select-none ${
@@ -116,8 +116,8 @@ const Images = ({ images }: ImagesProps) => {
   )
 }
 
-const Image = ({ imageId, idx }: ImageProps) => {
-  const image = useImage(imageId)
+const Image = ({ imageIds, idx }: ImageProps) => {
+  const image = useImage(imageIds[0])
   const { ref, inView } = useInView({
     initialInView: idx < 1,
     triggerOnce: true
