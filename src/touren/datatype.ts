@@ -63,6 +63,7 @@ export interface VersionHistory {
   href: string
 }
 
+type ImageType = '' | number
 export interface Acf {
   land?: string
   region?: string
@@ -76,16 +77,16 @@ export interface Acf {
   i_hoehenmeter?: string
   i_dauer?: string
   i_schwierigkeit?: string
-  bild1?: string | number
-  bild2?: string | number
-  bild3?: string | number
-  bild4?: string | number
-  bild5?: string | number
-  bild6?: string | number
-  bild7?: string | number
-  bild8?: string | number
-  bild9?: string | number
-  bild10?: '' | number
+  bild1?: ImageType
+  bild2?: ImageType
+  bild3?: ImageType
+  bild4?: ImageType
+  bild5?: ImageType
+  bild6?: ImageType
+  bild7?: ImageType
+  bild8?: ImageType
+  bild9?: ImageType
+  bild10?: ImageType
 }
 
 export interface Content {

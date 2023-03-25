@@ -148,7 +148,7 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
               return { ...current }
             })
           }
-          className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full"
+          className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full "
           aria-label="Auswahl leeren">
           x
         </button>
@@ -422,16 +422,8 @@ interface TourProps {
   idx: number
 }
 
-type InfoIcon = { icon: string; text?: string; alt: string }
-const Tour = ({ data, idx }: TourProps) => {
-  const infos: InfoIcon[] = [
-    {
-      icon: bergauf,
-      alt: 'Höhenmeter',
-      text: data.acf.hoehenmeter
-    },
-    { icon: gipfelhoehe, text: data.acf.gipfelhoehe, alt: 'Gipfelhöhe' }
-  ]
+// extracts images from tour data
+const useExtractImages = (data: TourProps['data']) => {
   const {
     bild1,
     bild2,
@@ -445,7 +437,7 @@ const Tour = ({ data, idx }: TourProps) => {
     bild10
   } = data.acf
 
-  const images = [
+  return [
     bild1,
     bild2,
     bild3,
@@ -456,29 +448,52 @@ const Tour = ({ data, idx }: TourProps) => {
     bild8,
     bild9,
     bild10
-  ].filter((x) => !!x) as number[]
-  console.log(images)
+  ].filter(Boolean)
+}
+
+type InfoIcon = { icon: string; text?: string; alt: string }
+const Tour = ({ data, idx }: TourProps) => {
+  const infos: InfoIcon[] = [
+    {
+      icon: bergauf,
+      alt: 'Höhenmeter',
+      text: data.acf.i_hoehenmeter
+    },
+    { icon: gipfelhoehe, text: data.acf.i_gipfelhoehe, alt: 'Gipfelhöhe' },
+    { icon: dauer, text: data.acf.i_dauer, alt: 'Dauer' },
+    { icon: technik, text: data.acf.schwierigkeit, alt: 'Schwierigkeit' },
+    { icon: land, text: data.acf.land, alt: 'Land' }
+  ]
+
+  const images = useExtractImages(data)
   return (
     <m.div
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 1, opacity: 0 }}
       layout
-      className="grid group">
+      className="grid group overflow-hidden">
       <Suspense fallback={<Placeholder />}>
         <Image imageIds={images} idx={idx} />
       </Suspense>
-      <div className="mx-20 origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:hover:underline-offset-8 hover:underline-offset-[3px] hover:underline font-medium text-2xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
-        <a href={data.link}>{data.title.rendered}</a>
-        <div className="absolute bottom-1 lg:bottom-3 -right-16 flex items flex-row items-center justify-end opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity gap-6 text-xs md:text-sm">
-          {infos.map(({ icon, text, alt }) => {
-            if (!text) return null
-            return (
-              <div key={icon} className="flex flex-row gap-1 items-center">
-                <img src={icon} className="h-3" alt={alt} />
-                {text}
-              </div>
-            )
-          })}
+      <div className=" mx-20 origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:hover:underline-offset-8 hover:underline-offset-[3px] hover:underline font-medium text-4xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
+        <a className="hyphens absolute left-2 right-0" href={data.link}>
+          {data.title.rendered}
+        </a>
+        <div className="absolute -bottom-5 pb-6 lg:pb-8 -left-20 -right-20 opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-xs md:text-sm overflow-scroll snap-x">
+          <div className="px-4 flex flex-row min-w-max items-center justify-end gap-6">
+            {infos.map(({ icon, text, alt }) => {
+              if (!text) return null
+              return (
+                <div
+                  key={icon}
+                  title={alt}
+                  className="snap-center flex-shrink-0 flex  flex-row gap-1 items-center bg-white text-black px-4 py-2 rounded-xl text-shadow-none">
+                  <img src={icon} className="h-3" alt={alt} />
+                  <span>{text}</span>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     </m.div>

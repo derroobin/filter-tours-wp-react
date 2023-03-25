@@ -1,4 +1,4 @@
-import { useImage } from './queries'
+import { useImages, useImage } from './queries'
 import { useInView } from 'react-intersection-observer'
 import type { MediaType } from './datatype'
 import { Placeholder } from './placeholder'
@@ -11,6 +11,7 @@ interface ImageProps {
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { wrap } from 'popmotion'
+import { useQuery } from '@tanstack/react-query'
 
 const variants = {
   enter: (direction: number) => {
@@ -64,7 +65,7 @@ const swipePower = (offset: number, velocity: number) => {
 }
 
 interface ImagesProps {
-  images: { src: string; srcSet: string }[]
+  images: Array<{ src: string; srcSet: string }>
 }
 const Images = ({ images }: ImagesProps) => {
   const [[page, direction], setPage] = useState([0, 0])
@@ -74,7 +75,6 @@ const Images = ({ images }: ImagesProps) => {
   // absolute page index as the `motion` component's `key` prop, `AnimatePresence` will
   // detect it as an entirely new image. So you can infinitely paginate as few as 1 images.
   const imageIndex = wrap(0, images.length, page)
-
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection])
   }
@@ -117,41 +117,22 @@ const Images = ({ images }: ImagesProps) => {
 }
 
 const Image = ({ imageIds, idx }: ImageProps) => {
-  const image = useImage(imageIds[0])
   const { ref, inView } = useInView({
     initialInView: idx < 1,
     triggerOnce: true
   })
+  const [first, ...others] = imageIds
+  const { data: image } = useImage(first)
+  const images = useImages(others, inView)
 
-  const selectedSizes: Array<keyof MediaType['media_details']['sizes']> = [
-    'medium_large',
-    'large',
-    'full'
-  ]
-  const srcSet = selectedSizes
-    .map((key) => {
-      const src = image.data?.media_details.sizes[key]
-
-      if (!src) return ''
-
-      return `${src.source_url} ${src.width}w`
-    })
-    .join(', ')
-  const src = image.data?.media_details.sizes.medium_large.source_url
+  const allImages = [image, ...images.map((x) => x.data)].filter(Boolean)
 
   return (
     <div
       className="relative col-start-1 row-start-1 z-0 overflow-hidden"
       ref={ref}>
       <Placeholder />
-      {src && inView ? (
-        <Images
-          images={[
-            { src, srcSet },
-            { src, srcSet }
-          ]}
-        />
-      ) : null}
+      {allImages.length > 0 && inView ? <Images images={allImages} /> : null}
     </div>
   )
 }
