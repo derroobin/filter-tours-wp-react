@@ -479,7 +479,7 @@ const Tour = ({ data, idx }: TourProps) => {
         <a className="hyphens absolute left-2 right-0" href={data.link}>
           {data.title.rendered}
         </a>
-        <div className="absolute -bottom-5 pb-6 lg:pb-8 -left-20 -right-20 opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-xs md:text-sm overflow-scroll snap-x">
+        <div className="absolute -bottom-5 pb-6 lg:pb-8 -left-20 -right-20 opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-xs md:text-sm overflow-y-auto snap-x">
           <div className="px-4 flex flex-row min-w-max items-center justify-end gap-6">
             {infos.map(({ icon, text, alt }) => {
               if (!text) return null
