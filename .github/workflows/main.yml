@@ -45,12 +45,13 @@ jobs:
           path: ./dist
       
       - name: 📂 Sync files
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: ./dist/
+          local-dir: ./dist/
           port: 22
+          METHOD: sftp
 
       
