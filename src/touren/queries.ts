@@ -3,9 +3,7 @@ import type { Acf, MediaType, TourenType } from './datatype'
 
 const getPages = async () => {
   const url = new URL(
-    `${
-      import.meta.env.VITE_URL
-    }/wp-json/wp/v2/pages?parent=12472&per_page=100&_fields=acf,slug,title,featured_media,link`
+    `https://deingipfel-outdoorverleih.de/wp-json/wp/v2/pages?parent=12472&per_page=100&_fields=acf,slug,title,featured_media,link`
   )
   const req = await fetch(url)
 
@@ -29,7 +27,7 @@ const getImage: QueryFunction<
   [string, number]
 > = async ({ queryKey }) => {
   const [_, imageId] = queryKey
-  const url = `${import.meta.env.VITE_URL}/wp-json/wp/v2/media/${imageId}`
+  const url = `https://deingipfel-outdoorverleih.de/wp-json/wp/v2/media/${imageId}`
 
   const req = await fetch(url).catch((e) => ({ error: e }))
 
