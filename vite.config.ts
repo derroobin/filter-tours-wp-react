@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     manifest: true
-  }
+  },
+  base: 'https://touren.deingipfel-outdoorverleih.de'
 })
