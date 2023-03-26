@@ -51,7 +51,6 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          port: 22
-          METHOD: sftp
+          protocol: ftps
 
       
