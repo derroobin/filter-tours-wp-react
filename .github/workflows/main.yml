@@ -51,6 +51,7 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           local_path: ./dist/
+          remote_path: .
           port: 22
 
       
