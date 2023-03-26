@@ -24,6 +24,8 @@ jobs:
 
       - name: Build project
         run: npm run build
+        env: 
+          VITE_URL: ${{ env.VITE_URL }}
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v3.1.2
