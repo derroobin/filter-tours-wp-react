@@ -84,7 +84,7 @@ const Images = ({ images }: ImagesProps) => {
       <AnimatePresence initial={false} custom={direction}>
         <motion.img
           key={page}
-          className="absolute inset-0 z-0 object-cover w-full h-full"
+          className="absolute inset-0 z-0 object-cover !w-full !h-full"
           src={images[imageIndex].src}
           srcSet={images[imageIndex].srcSet}
           custom={direction}
