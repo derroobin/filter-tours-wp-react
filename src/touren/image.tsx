@@ -110,8 +110,12 @@ const Images = ({ images }: ImagesProps) => {
           }}
         />
       </AnimatePresence>
-      <Button onClick={() => paginate(-1)} prev />
-      <Button onClick={() => paginate(1)} />
+      {images.length > 0 ? (
+        <>
+          <Button onClick={() => paginate(-1)} prev />
+          <Button onClick={() => paginate(1)} />
+        </>
+      ) : null}
     </>
   )
 }
