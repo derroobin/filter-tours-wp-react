@@ -219,7 +219,7 @@ const Filter = ({
       />
       {showDeleteButton ? (
         <button
-          className="underline underline-offset-2 text-blue-600 hover:text-blue-400 text-left pl-2"
+          className="underline underline-offset-2 text-blue-600 hover:text-blue-400 text-left pl-2 !bg-white"
           onClick={() => setState({})}>
           Alle Filter löschen
         </button>
@@ -488,7 +488,7 @@ const Tour = ({ data, idx }: TourProps) => {
                   key={icon}
                   title={alt}
                   className="snap-center flex-shrink-0 flex  flex-row gap-1 items-center bg-white text-black px-4 py-2 rounded-xl text-shadow-none">
-                  <img src={icon} className="h-3" alt={alt} />
+                  <img src={icon} className="!h-3" alt={alt} />
                   <span>{text}</span>
                 </div>
               )
