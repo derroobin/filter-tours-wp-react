@@ -340,6 +340,43 @@ const useFilter = () => {
   }
 }
 
+const heightRegex = /^(\D{0,1})(\d{3,4})/
+
+const dauerRegex = /^(\D{0,1})(\d{1,2})/
+
+const getNumber = (str: string, store: Map<string, number>, regex: RegExp) => {
+  const storeVal = store.get(str)
+  if (storeVal) {
+    return storeVal
+  }
+  const numStr = str.match(regex)
+
+  if (!numStr || numStr.length <= 1) {
+    return 99999
+  }
+  const num =
+    Number.parseInt(numStr[2]) +
+    (numStr[1] === '<' ? -1 : numStr[1] === '>' ? 1 : 0)
+  if (!num || Number.isNaN(numStr)) {
+    return 9999
+  }
+
+  store.set(str, num)
+
+  return num
+}
+
+const sortHeights = (arr: string[], regex: RegExp) => {
+  const store = new Map<string, number>()
+
+  return arr.sort((a, b) => {
+    const numA = getNumber(a, store, regex)
+    const numB = getNumber(b, store, regex)
+
+    return numA - numB
+  })
+}
+
 // generates options for filters from api data
 const useOptions = () => {
   const data = useTouren()
@@ -382,16 +419,15 @@ const useOptions = () => {
       }
 
       setOptions({
-        dauers: Array.from(dauer),
-        lands: Array.from(land),
-        hoehenmeters: Array.from(hoehenmeter),
-        gipfelhoehes: Array.from(gipfelhoehe),
-        regions: Array.from(region),
-        schwierigkeits: Array.from(schwierigkeit)
+        dauers: sortHeights(Array.from(dauer), dauerRegex),
+        lands: Array.from(land).sort(),
+        hoehenmeters: sortHeights(Array.from(hoehenmeter), heightRegex),
+        gipfelhoehes: sortHeights(Array.from(gipfelhoehe), heightRegex),
+        regions: Array.from(region).sort(),
+        schwierigkeits: Array.from(schwierigkeit).sort()
       })
     }
   }, [data.data])
-
   return options
 }
 
