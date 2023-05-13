@@ -184,7 +184,7 @@ const Filter = ({
     <div className="grid mx-auto sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-2 pt-2 mb-10 px-4">
       <Selection
         type="art"
-        name="art"
+        name="tourenart"
         options={arts}
         setState={setState}
         value={state.art}
