@@ -551,7 +551,7 @@ const Tour = ({ data, idx }: TourProps) => {
                 <div
                   key={icon}
                   title={alt}
-                  className="snap-center flex-shrink-0 flex  flex-row gap-1 items-center bg-white text-black px-4 py-2 rounded-xl text-shadow-none">
+                  className="snap-center flex-shrink-0 flex  flex-row gap-1 items-center  text-black px-4 py-2 rounded-xl text-shadow-none bg-white/60 backdrop-blur-sm">
                   <img src={icon} className="!h-3" alt={alt} />
                   <span>{text}</span>
                 </div>
