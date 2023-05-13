@@ -174,7 +174,7 @@ const Filter = ({
     [state]
   )
   return (
-    <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-2 pt-2 mb-10 px-4">
+    <div className="grid mx-auto sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-2 pt-2 mb-10 px-4">
       <Selection
         type="dauer"
         name="dauer"
