@@ -473,7 +473,7 @@ const Touren = () => {
       <div className="grid gap-4">
         <AnimatePresence>
           {data.length === 0 ? (
-            <h1 className="text-center">Keine Touren verfügbar</h1>
+            <h2 className="text-center">Keine Touren verfügbar</h2>
           ) : (
             data.map((x, idx) => <Tour key={x.slug} data={x} idx={idx} />)
           )}
