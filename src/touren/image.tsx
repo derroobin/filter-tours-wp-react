@@ -1,6 +1,5 @@
 import { useImages, useImage } from './queries'
 import { useInView } from 'react-intersection-observer'
-import type { MediaType } from './datatype'
 import { Placeholder } from './placeholder'
 
 interface ImageProps {
@@ -53,16 +52,6 @@ const Button = ({ prev, onClick }: ButtonProps) => {
     </button>
   )
 }
-/**
- * Experimenting with distilling swipe offset and velocity into a single variable, so the
- * less distance a user has swiped, the more velocity they need to register as a swipe.
- * Should accomodate longer swipes and short flicks without having binary checks on
- * just distance thresholds and velocity > 0.
- */
-const swipeConfidenceThreshold = 10000
-const swipePower = (offset: number, velocity: number) => {
-  return Math.abs(offset) * velocity
-}
 
 interface ImagesProps {
   images: Array<{ src: string; srcSet: string }>
@@ -95,18 +84,6 @@ const Images = ({ images }: ImagesProps) => {
           transition={{
             x: { type: 'spring', stiffness: 300, damping: 30 },
             opacity: { duration: 0.5 }
-          }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={1}
-          onDragEnd={(e, { offset, velocity }) => {
-            const swipe = swipePower(offset.x, velocity.x)
-
-            if (swipe < -swipeConfidenceThreshold) {
-              paginate(1)
-            } else if (swipe > swipeConfidenceThreshold) {
-              paginate(-1)
-            }
           }}
         />
       </AnimatePresence>
