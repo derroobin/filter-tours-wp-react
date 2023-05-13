@@ -261,7 +261,8 @@ const availableSettings: Array<keyof Acf> = [
   'land',
   'gipfelhoehe',
   'schwierigkeit',
-  'region'
+  'region',
+  'art'
 ]
 
 type FilterSettings = { [key in keyof Acf]: string }
