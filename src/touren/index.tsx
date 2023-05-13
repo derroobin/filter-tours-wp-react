@@ -539,9 +539,11 @@ const Tour = ({ data, idx }: TourProps) => {
       <Suspense fallback={<Placeholder />}>
         <Image imageIds={images} idx={idx} />
       </Suspense>
-      <div className=" mx-20 origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:hover:underline-offset-8 hover:underline-offset-[3px] hover:underline font-medium text-3xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
-        <a className="hyphens absolute left-2 right-0" href={data.link}>
-          {data.title.rendered}
+      <div className="mx-20 origin-center col-start-1 row-start-1 z-0 relative grid items-center text-shadow text-white lg:hover:underline-offset-8 hover:underline-offset-[3px] hover:underline font-medium text-3xl md:text-5xl lg:text-6xl xl:text-8xl px-4">
+        <a
+          className="hyphens absolute left-2 right-0 top-0 bottom-0 flex items-center"
+          href={data.link}>
+          <span>{data.title.rendered}</span>
         </a>
         <div className="absolute -bottom-5 pb-6 lg:pb-8 -left-20 -right-20 opacity-100 md:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-xs md:text-sm overflow-y-auto snap-x">
           <div className="px-4 flex flex-row min-w-max items-center justify-end gap-4 lg:gap-6">
