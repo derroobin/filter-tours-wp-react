@@ -39,7 +39,13 @@ type FilterOuterProps = {
 
 type keyofAcf = keyof Pick<
   Acf,
-  'dauer' | 'hoehenmeter' | 'land' | 'gipfelhoehe' | 'schwierigkeit' | 'region'
+  | 'dauer'
+  | 'hoehenmeter'
+  | 'land'
+  | 'gipfelhoehe'
+  | 'schwierigkeit'
+  | 'region'
+  | 'art'
 >
 type FilterProps = Record<`${keyofAcf}s`, Array<string>>
 
@@ -166,7 +172,8 @@ const Filter = ({
     schwierigkeits,
     gipfelhoehes,
     hoehenmeters,
-    dauers
+    dauers,
+    arts
   }
 }: FilterOuterProps) => {
   const showDeleteButton = useMemo(
@@ -175,6 +182,13 @@ const Filter = ({
   )
   return (
     <div className="grid mx-auto sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-2 pt-2 mb-10 px-4">
+      <Selection
+        type="art"
+        name="art"
+        options={arts}
+        setState={setState}
+        value={state.art}
+      />
       <Selection
         type="dauer"
         name="dauer"
@@ -281,32 +295,41 @@ const useFilter = () => {
     if (all.data) {
       setFiltered(
         all.data.filter(({ acf }) => {
-          if (state.land && state.land !== acf.land) {
+          if (state.land && !acf.land?.includes(state.land)) {
             return false
           }
 
-          if (state.gipfelhoehe && state.gipfelhoehe !== acf.gipfelhoehe) {
+          if (
+            state.gipfelhoehe &&
+            !acf.gipfelhoehe?.includes(state.gipfelhoehe)
+          ) {
             return false
           }
 
-          if (state.region && state.region !== acf.region) {
+          if (state.region && !acf.region?.includes(state.region)) {
             return false
           }
 
-          if (state.hoehenmeter && state.hoehenmeter !== acf.hoehenmeter) {
+          if (
+            state.hoehenmeter &&
+            !acf.hoehenmeter?.includes(state.hoehenmeter)
+          ) {
             return false
           }
 
           if (
             state.schwierigkeit &&
-            state.schwierigkeit !== acf.schwierigkeit
+            !acf.schwierigkeit?.includes(state.schwierigkeit)
           ) {
             return false
           }
-          if (state.dauer && state.dauer !== acf.dauer) {
+          if (state.dauer && !acf.dauer?.includes(state.dauer)) {
             return false
           }
 
+          if (state.art && !acf.art?.includes(state.art)) {
+            return false
+          }
           return true
         })
       )
@@ -377,6 +400,18 @@ const sortHeights = (arr: string[], regex: RegExp) => {
   })
 }
 
+const addElement = (set: Set<string>, element?: string | Array<string>) => {
+  if (!element) return
+
+  if (Array.isArray(element)) {
+    for (let e of element) {
+      set.add(e)
+    }
+    return
+  }
+
+  set.add(element)
+}
 // generates options for filters from api data
 const useOptions = () => {
   const data = useTouren()
@@ -386,7 +421,8 @@ const useOptions = () => {
     hoehenmeters: [],
     regions: [],
     gipfelhoehes: [],
-    dauers: []
+    dauers: [],
+    arts: []
   })
   useEffect(() => {
     if (data.data) {
@@ -396,26 +432,17 @@ const useOptions = () => {
       const dauer = new Set<string>()
       const gipfelhoehe = new Set<string>()
       const hoehenmeter = new Set<string>()
+      const art = new Set<string>()
 
       for (let i = 0; i < data.data.length; i++) {
-        if (data.data[i].acf.region) {
-          region.add(data.data[i].acf.region as string)
-        }
-        if (data.data[i].acf.schwierigkeit) {
-          schwierigkeit.add(data.data[i].acf.schwierigkeit as string)
-        }
-        if (data.data[i].acf.land) {
-          land.add(data.data[i].acf.land as string)
-        }
-        if (data.data[i].acf.gipfelhoehe) {
-          gipfelhoehe.add(data.data[i].acf.gipfelhoehe as string)
-        }
-        if (data.data[i].acf.hoehenmeter) {
-          hoehenmeter.add(data.data[i].acf.hoehenmeter as string)
-        }
-        if (data.data[i].acf.dauer) {
-          dauer.add(data.data[i].acf.dauer as string)
-        }
+        const acf = data.data[i].acf
+        addElement(region, acf.region)
+        addElement(schwierigkeit, acf.schwierigkeit)
+        addElement(land, acf.land)
+        addElement(gipfelhoehe, acf.gipfelhoehe)
+        addElement(hoehenmeter, acf.hoehenmeter)
+        addElement(dauer, acf.dauer)
+        addElement(art, acf.art)
       }
 
       setOptions({
@@ -424,7 +451,8 @@ const useOptions = () => {
         hoehenmeters: sortHeights(Array.from(hoehenmeter), heightRegex),
         gipfelhoehes: sortHeights(Array.from(gipfelhoehe), heightRegex),
         regions: Array.from(region).sort(),
-        schwierigkeits: Array.from(schwierigkeit).sort()
+        schwierigkeits: Array.from(schwierigkeit).sort(),
+        arts: Array.from(art).sort()
       })
     }
   }, [data.data])
@@ -497,8 +525,8 @@ const Tour = ({ data, idx }: TourProps) => {
     },
     { icon: gipfelhoehe, text: data.acf.i_gipfelhoehe, alt: 'Gipfelhöhe' },
     { icon: dauer, text: data.acf.i_dauer, alt: 'Dauer' },
-    { icon: technik, text: data.acf.schwierigkeit, alt: 'Schwierigkeit' },
-    { icon: land, text: data.acf.land, alt: 'Land' }
+    { icon: technik, text: data.acf.i_schwierigkeit, alt: 'Schwierigkeit' },
+    { icon: land, text: data.acf.i_land, alt: 'Land' }
   ]
 
   const images = useExtractImages(data)

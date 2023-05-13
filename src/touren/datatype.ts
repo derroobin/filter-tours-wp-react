@@ -65,12 +65,13 @@ export interface VersionHistory {
 
 type ImageType = '' | number
 export interface Acf {
-  land?: string
-  region?: string
-  gipfelhoehe?: string
-  hoehenmeter?: string
-  dauer?: string
-  schwierigkeit?: string
+  land?: string | Array<string>
+  region?: string | Array<string>
+  gipfelhoehe?: string | Array<string>
+  hoehenmeter?: string | Array<string>
+  dauer?: string | Array<string>
+  schwierigkeit?: string | Array<string>
+  art?: Array<string>
   i_land?: string
   i_region?: string
   i_gipfelhoehe?: string
