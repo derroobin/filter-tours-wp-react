@@ -128,7 +128,7 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
         </span>
 
         <ul
-          className="opacity-0 -translate-y-2 top-[calc(100%-10px)] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-6 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all duration-300 border-[3px] border-black"
+          className="opacity-0 border-solid -translate-y-2 top-[calc(100%-10px)] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-6 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all duration-300 border-[3px] border-black"
           aria-haspopup="true"
           aria-expanded={expanded}>
           <RovingTabIndexProvider>
