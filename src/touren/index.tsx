@@ -121,7 +121,7 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
     <div className="relative" aria-label={name}>
       <div className="group relative font-semibold" ref={ref}>
         <span
-          className="block capitalize border-[3px] rounded-full text-center border-black group-hover:shadow-[rgba(0,0,0,0.13)_0px_7px_15px,rgba(0,0,0,0.05)_0px_0px_3px] transition-all duration-300 ease-in-out px-8 py-4 w-full text-lg bg-white cursor-pointer"
+          className="block capitalize border-[3px] rounded-full text-center border-black group-hover:shadow-[rgba(0,0,0,0.13)_0px_7px_15px,rgba(0,0,0,0.05)_0px_0px_3px] transition-shadow duration-300 ease-in-out px-8 py-4 w-full text-lg bg-white cursor-pointer"
           tabIndex={-1}
           onClick={() => ref.current?.focus()}>
           {value || name}
