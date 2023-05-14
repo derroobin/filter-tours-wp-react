@@ -119,16 +119,16 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
   }, [])
   return (
     <div className="relative" aria-label={name}>
-      <div className="group relative" ref={ref}>
+      <div className="group relative font-semibold" ref={ref}>
         <span
-          className="block capitalize border rounded-md border-gray-400 px-4 py-2 w-full text-left text-lg bg-white cursor-pointer"
+          className="block capitalize border-[3px] rounded-full text-center border-black shadow-[0_0_0_0_black] group-hover:shadow-[2px_5px_0_0_black] group-hover:translate-x-[-2px] group-hover:-translate-y-1 transition-all duration-300 ease-in-out px-8 py-4 w-full text-lg bg-white cursor-pointer"
           tabIndex={-1}
           onClick={() => ref.current?.focus()}>
           {value || name}
         </span>
 
         <ul
-          className="opacity-0 -translate-y-2 top-[110%] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-0 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all"
+          className="opacity-0 -translate-y-2 top-[calc(100%-10px)] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-6 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all duration-300 border-[3px] border-black"
           aria-haspopup="true"
           aria-expanded={expanded}>
           <RovingTabIndexProvider>
@@ -145,20 +145,20 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
             ))}
           </RovingTabIndexProvider>
         </ul>
+        {!!value ? (
+          <button
+            onClick={() =>
+              setState((current) => {
+                current[type] = undefined
+                return { ...current }
+              })
+            }
+            className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full group-hover:translate-x-[-2px] group-hover:-translate-y-[calc(50%+4px)] transition-all duration-300 ease-in-out"
+            aria-label="Auswahl leeren">
+            x
+          </button>
+        ) : null}
       </div>
-      {!!value ? (
-        <button
-          onClick={() =>
-            setState((current) => {
-              current[type] = undefined
-              return { ...current }
-            })
-          }
-          className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full "
-          aria-label="Auswahl leeren">
-          x
-        </button>
-      ) : null}
     </div>
   )
 }
@@ -181,7 +181,7 @@ const Filter = ({
     [state]
   )
   return (
-    <div className="grid mx-auto sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-2 pt-2 mb-10 px-4">
+    <div className="grid mx-auto sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-5 pt-2 mb-10 px-4">
       <Selection
         type="art"
         name="tourenart"
