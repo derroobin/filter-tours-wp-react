@@ -121,7 +121,7 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
     <div className="relative" aria-label={name}>
       <div className="group relative font-semibold" ref={ref}>
         <span
-          className="block capitalize border-[3px] rounded-full text-center border-black shadow-[0_0_0_0_black] group-hover:shadow-[2px_5px_0_0_black] group-hover:translate-x-[-2px] group-hover:-translate-y-1 transition-all duration-300 ease-in-out px-8 py-4 w-full text-lg bg-white cursor-pointer"
+          className="block capitalize border-[3px] rounded-full text-center border-black group-hover:shadow-[rgba(0,0,0,0.13)_0px_7px_15px,rgba(0,0,0,0.05)_0px_0px_3px] transition-all duration-300 ease-in-out px-8 py-4 w-full text-lg bg-white cursor-pointer"
           tabIndex={-1}
           onClick={() => ref.current?.focus()}>
           {value || name}
@@ -145,20 +145,20 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
             ))}
           </RovingTabIndexProvider>
         </ul>
-        {!!value ? (
-          <button
-            onClick={() =>
-              setState((current) => {
-                current[type] = undefined
-                return { ...current }
-              })
-            }
-            className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full group-hover:translate-x-[-2px] group-hover:-translate-y-[calc(50%+4px)] transition-all duration-300 ease-in-out"
-            aria-label="Auswahl leeren">
-            x
-          </button>
-        ) : null}
       </div>
+      {!!value ? (
+        <button
+          onClick={() =>
+            setState((current) => {
+              current[type] = undefined
+              return { ...current }
+            })
+          }
+          className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full"
+          aria-label="Auswahl leeren">
+          x
+        </button>
+      ) : null}
     </div>
   )
 }
