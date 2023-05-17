@@ -128,7 +128,7 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
         </span>
 
         <ul
-          className="opacity-0 border-solid -translate-y-2 top-[calc(100%-10px)] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-6 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all duration-300 border-[3px] border-black"
+          className="opacity-0 border-solid hyphens -translate-y-2 top-[calc(100%-10px)] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-6 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all duration-300 border-[3px] border-black"
           aria-haspopup="true"
           aria-expanded={expanded}>
           <RovingTabIndexProvider>
@@ -181,7 +181,7 @@ const Filter = ({
     [state]
   )
   return (
-    <div className="grid mx-auto sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 max-w-[90rem] gap-x-3 gap-y-5 pt-2 mb-10 px-4">
+    <div className="grid mx-auto sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 max-w-[100rem] gap-x-3 gap-y-5 pt-2 mb-10 px-4">
       <Selection
         type="art"
         name="tourenart"
