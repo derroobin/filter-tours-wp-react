@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     manifest: true
   },
-  base: 'https://touren.deingipfel-outdoorverleih.de',
+  base: 'https://touren.deingipfel-outdoorverleih.de/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
