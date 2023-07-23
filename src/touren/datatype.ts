@@ -69,6 +69,7 @@ export interface Acf {
   region?: string | Array<string>
   gipfelhoehe?: string | Array<string>
   hoehenmeter?: string | Array<string>
+  berg?: string | Array<string>
   dauer?: string | Array<string>
   schwierigkeit?: string | Array<string>
   art?: Array<string>
