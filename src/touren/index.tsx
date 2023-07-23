@@ -195,20 +195,24 @@ const Filter = ({
         setState={setState}
         value={state.land}
       />
-      <Selection
-        type="region"
-        name="region"
-        options={regions}
-        setState={setState}
-        value={state.region}
-      />
-      <Selection
-        type="berg"
-        name="berg"
-        options={bergs}
-        setState={setState}
-        value={state.berg}
-      />
+      {regions.length ? (
+        <Selection
+          type="region"
+          name="region"
+          options={regions}
+          setState={setState}
+          value={state.region}
+        />
+      ) : null}
+      {bergs.length ? (
+        <Selection
+          type="berg"
+          name="berg"
+          options={bergs}
+          setState={setState}
+          value={state.berg}
+        />
+      ) : null}
       <Selection
         type="gipfelhoehe"
         name="gipfelhöhe"
