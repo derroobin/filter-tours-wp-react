@@ -83,15 +83,15 @@ const Selection = ({ setState, name, value, options, type }: SelectionType) => {
           {value || name}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 border-solid border-[3px] border-black outline-0">
+      <PopoverContent className="w-[80vw] max-w-[550px] p-0 border-solid border-[3px] border-black outline-0">
         <Command className="">
-          <CommandInput placeholder={`Suche..`} />
+          <CommandInput placeholder={`Suche..`} className="text-lg" />
           <CommandEmpty>Keine Ergebnisse</CommandEmpty>
           <CommandGroup>
             {options.map((framework) => (
               <CommandItem
                 key={framework}
-                className="aria-selected:bg-blue-400 text-left font-semibold"
+                className="aria-selected:bg-blue-400 text-left font-semibold  text-lg py-4"
                 onSelect={() => {
                   setState((current) => {
                     console.log('cv', framework)
