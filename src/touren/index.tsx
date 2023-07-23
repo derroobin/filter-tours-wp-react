@@ -28,6 +28,95 @@ import klettersteig from '../assets/icons/Klettersteig.png'
 import land from '../assets/icons/Land_und_Region.png'
 import strecke from '../assets/icons/Strecke.png'
 import technik from '../assets/icons/Technik.png'
+import * as React from 'react'
+import { Check, ChevronsUpDown } from 'lucide-react'
+
+import { cn } from '../lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
+
+const frameworks = [
+  {
+    value: 'next.js',
+    label: 'Next.js'
+  },
+  {
+    value: 'sveltekit',
+    label: 'SvelteKit'
+  },
+  {
+    value: 'nuxt.js',
+    label: 'Nuxt.js'
+  },
+  {
+    value: 'remix',
+    label: 'Remix'
+  },
+  {
+    value: 'astro',
+    label: 'Astro'
+  }
+]
+
+const Selection = ({ setState, name, value, options, type }: SelectionType) => {
+  const [open, setOpen] = React.useState(false)
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="h-auto capitalize font-semibold text-ellipsis whitespace-nowrap overflow-hidden border-[3px] rounded-full text-center border-black group-hover:shadow-[rgba(0,0,0,0.13)_0px_7px_15px,rgba(0,0,0,0.05)_0px_0px_3px] transition-shadow duration-300 ease-in-out px-8 py-4 w-full text-lg bg-white cursor-pointer">
+          {value || name}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0 border-solid border-[3px] border-black outline-0">
+        <Command className="">
+          <CommandInput placeholder={`Suche..`} />
+          <CommandEmpty>Keine Ergebnisse</CommandEmpty>
+          <CommandGroup>
+            {options.map((framework) => (
+              <CommandItem
+                key={framework}
+                className="aria-selected:bg-blue-400 text-left font-semibold"
+                onSelect={() => {
+                  setState((current) => {
+                    console.log('cv', framework)
+                    const newPartial: FilterSettings = {}
+                    newPartial[type] =
+                      framework === value ? undefined : framework || undefined
+                    return { ...current, ...newPartial }
+                  })
+                  setOpen(false)
+                }}>
+                <Check
+                  className={cn(
+                    'mr-2 h-4 w-4',
+                    value === framework ? 'opacity-100' : 'opacity-0'
+                  )}
+                />
+                {framework}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
 
 const Image = lazy(() => import('./image'))
 
@@ -46,6 +135,7 @@ type keyofAcf = keyof Pick<
   | 'schwierigkeit'
   | 'region'
   | 'art'
+  | 'berg'
 >
 type FilterProps = Record<`${keyofAcf}s`, Array<string>>
 
@@ -55,112 +145,6 @@ interface SelectionType {
   setState: Dispatch<SetStateAction<FilterSettings>>
   name: string
   type: keyof Acf
-}
-
-const Option = ({
-  setState,
-  type,
-  value,
-  option,
-  disabled = false
-}: Omit<SelectionType, 'options'> & {
-  option: null | string
-  idx: number
-  disabled?: boolean
-}) => {
-  const ref = useRef<HTMLButtonElement>(null)
-  const [tabIndex, focused, handleKeyDown, handleClick] = useRovingTabIndex(
-    ref,
-    disabled
-  )
-  useFocusEffect(focused, ref)
-  // blabla
-  return (
-    <li className="list-none">
-      <span
-        className="cursor-pointer block focus:bg-blue-400 hover:bg-blue-400 hover:ring-2 focus:ring-2 ring-blue-700 w-full text-left px-4 py-2 rounded-md overflow-visible"
-        ref={ref}
-        tabIndex={tabIndex}
-        onKeyDown={handleKeyDown}
-        onClick={(e) => {
-          handleClick()
-          setState((current) => {
-            const newPartial: FilterSettings = {}
-            newPartial[type] = option || undefined
-            return { ...current, ...newPartial }
-          })
-          ref.current?.blur()
-        }}>
-        {option || 'abwählen'}
-      </span>
-    </li>
-  )
-}
-//
-const Selection = ({ setState, name, value, options, type }: SelectionType) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const [expanded, setExpanded] = useState(false)
-  useEffect(() => {
-    if (ref.current) {
-      const x = () => {
-        setExpanded(true)
-      }
-      const y = () => {
-        setExpanded(false)
-      }
-      ref.current.addEventListener('focusin', x)
-      ref.current.addEventListener('focusout', y)
-
-      return () => {
-        ref.current?.removeEventListener('focusin', x)
-        ref.current?.removeEventListener('focusout', y)
-      }
-    }
-  }, [])
-  return (
-    <div className="relative" aria-label={name}>
-      <div className="group relative font-semibold" ref={ref}>
-        <span
-          className="block capitalize text-ellipsis whitespace-nowrap overflow-hidden border-[3px] rounded-full text-center border-black group-hover:shadow-[rgba(0,0,0,0.13)_0px_7px_15px,rgba(0,0,0,0.05)_0px_0px_3px] transition-shadow duration-300 ease-in-out px-8 py-4 w-full text-lg bg-white cursor-pointer"
-          tabIndex={-1}
-          onClick={() => ref.current?.focus()}>
-          {value || name}
-        </span>
-
-        <ul
-          className="opacity-0 border-solid hyphens  -translate-y-2 top-[calc(100%-10px)] pointer-events-none group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto position: absolute inset-x-6 bg-white rounded-md z-10 list-none drop-shadow-md grid gap-2 transition-all duration-300 border-[3px] border-black"
-          aria-haspopup="true"
-          aria-expanded={expanded}>
-          <RovingTabIndexProvider>
-            {options.map((x, idx) => (
-              <Option
-                type={type}
-                idx={idx}
-                option={x}
-                setState={setState}
-                key={x}
-                value={value}
-                name={name}
-              />
-            ))}
-          </RovingTabIndexProvider>
-        </ul>
-      </div>
-      {!!value ? (
-        <button
-          onClick={() =>
-            setState((current) => {
-              current[type] = undefined
-              return { ...current }
-            })
-          }
-          className="absolute right-1 aspect-square h-12 top-1/2 -translate-y-1/2 hover:bg-gray-400 rounded-full"
-          aria-label="Auswahl leeren">
-          x
-        </button>
-      ) : null}
-    </div>
-  )
 }
 
 const Filter = ({
@@ -173,7 +157,8 @@ const Filter = ({
     gipfelhoehes,
     hoehenmeters,
     dauers,
-    arts
+    arts,
+    bergs
   }
 }: FilterOuterProps) => {
   const showDeleteButton = useMemo(
@@ -218,6 +203,13 @@ const Filter = ({
         value={state.region}
       />
       <Selection
+        type="berg"
+        name="berg"
+        options={bergs}
+        setState={setState}
+        value={state.berg}
+      />
+      <Selection
         type="gipfelhoehe"
         name="gipfelhöhe"
         options={gipfelhoehes}
@@ -231,6 +223,7 @@ const Filter = ({
         setState={setState}
         value={state.hoehenmeter}
       />
+
       {showDeleteButton ? (
         <button
           className="underline underline-offset-2 text-blue-600 hover:text-blue-400 text-left pl-2 !bg-white"
@@ -296,6 +289,10 @@ const useFilter = () => {
     if (all.data) {
       setFiltered(
         all.data.filter(({ acf }) => {
+          if (acf.berg) {
+            console.log(acf.berg, state.berg)
+            console.log(acf.schwierigkeit, state.schwierigkeit)
+          }
           if (state.land && !acf.land?.includes(state.land)) {
             return false
           }
@@ -329,6 +326,10 @@ const useFilter = () => {
           }
 
           if (state.art && !acf.art?.includes(state.art)) {
+            return false
+          }
+
+          if (state.berg && !acf.berg?.includes(state.berg)) {
             return false
           }
           return true
@@ -423,7 +424,8 @@ const useOptions = () => {
     regions: [],
     gipfelhoehes: [],
     dauers: [],
-    arts: []
+    arts: [],
+    bergs: []
   })
   useEffect(() => {
     if (data.data) {
@@ -434,6 +436,7 @@ const useOptions = () => {
       const gipfelhoehe = new Set<string>()
       const hoehenmeter = new Set<string>()
       const art = new Set<string>()
+      const berg = new Set<string>()
 
       for (let i = 0; i < data.data.length; i++) {
         const acf = data.data[i].acf
@@ -444,6 +447,7 @@ const useOptions = () => {
         addElement(hoehenmeter, acf.hoehenmeter)
         addElement(dauer, acf.dauer)
         addElement(art, acf.art)
+        addElement(berg, acf.berg)
       }
 
       setOptions({
@@ -453,7 +457,8 @@ const useOptions = () => {
         gipfelhoehes: sortHeights(Array.from(gipfelhoehe), heightRegex),
         regions: Array.from(region).sort(),
         schwierigkeits: Array.from(schwierigkeit).sort(),
-        arts: Array.from(art).sort()
+        arts: Array.from(art).sort(),
+        bergs: Array.from(berg).sort()
       })
     }
   }, [data.data])
